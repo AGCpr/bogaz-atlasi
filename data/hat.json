@@ -1,0 +1,1 @@
+{"type": "FeatureCollection", "features": [{"type": "Feature", "properties": {"ad": "bogaz_hatti"}, "geometry": {"type": "LineString", "coordinates": [[26.05, 39.95], [26.35, 40.25], [26.65, 40.45], [26.95, 40.62]]}}]}

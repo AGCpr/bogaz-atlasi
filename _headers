@@ -1,0 +1,7 @@
+# Cloudflare Pages: statik asset önbelleği
+/img/*
+  Cache-Control: public, max-age=86400
+/data/*
+  Cache-Control: public, max-age=3600
+/dosya/*
+  Cache-Control: public, max-age=86400

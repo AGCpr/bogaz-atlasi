@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Boğaz Atlası — Çanakkale'de Stratejik Mekân Seçimi</title>
+<meta name="description" content="Tarihsel tabyalar ile güncel araziden üretilen fiziki uygunluğun karşılaştırılması — interaktif atlas (pilot).">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;800&family=Caveat:wght@500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<a class="skip" href="#harita">Haritaya atla</a>
+
+<div class="xy elyaz" id="xy" aria-hidden="true">X 0.00<br>Y 0.00</div>
+<div class="eposta elyaz" aria-hidden="true">bogaz.atlasi · pilot</div>
+
+<header class="hap" role="banner">
+  <a class="marka" href="#top" aria-label="Boğaz Atlası">
+    <svg viewBox="0 0 32 32" width="26" height="26" aria-hidden="true"><rect x="2" y="2" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"/><rect x="18" y="2" width="12" height="12" fill="currentColor"/><circle cx="8" cy="22" r="6" fill="none" stroke="currentColor" stroke-width="2"/><path d="M18 16h12v12H18z" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+    <span>boğaz atlası</span>
+  </a>
+  <nav aria-label="Bölümler">
+    <a href="#harita">Atlas</a>
+    <a href="#model">Model</a>
+    <a href="#ayrisma">Ayrışma</a>
+    <a href="#sonuclar">Hüküm</a>
+  </nav>
+  <a class="cta" href="#veri"><span class="cta-ikon" aria-hidden="true">↗</span> Veriyi aç</a>
+</header>
+
+<main id="top">
+<!-- HERO -->
+<section class="hero" aria-labelledby="hero-baslik">
+  <p class="not elyaz alti-cizili">coğrafya × tarih × cbs</p>
+  <h1 id="hero-baslik">Boğazın hafızası<br>arazide okunur.</h1>
+  <p class="sag-not elyaz">→ pilot anlatı,<br>kanıt değil</p>
+  <div class="cerceve harita-cerceve" id="harita">
+    <div id="map" role="application" aria-label="Çanakkale Boğazı interaktif uygunluk haritası"></div>
+    <div class="harita-bar">
+      <div class="yuzeyler" role="group" aria-label="Uygunluk yüzeyi">
+        <button data-katman="esit" class="secili">Eşit</button>
+        <button data-katman="uzman">Uzman</button>
+        <button data-katman="denge">Denge</button>
+        <button data-katman="kumulatif">Kümülatif</button>
+        <button data-katman="erisim">Erişim</button>
+      </div>
+      <div class="suzgecler" role="group" aria-label="Nokta filtresi">
+        <button data-filtre="aday" class="secili" aria-pressed="true">Tabyalar 8</button>
+        <button data-filtre="kontrol" class="secili" aria-pressed="true">Kontroller 48</button>
+      </div>
+    </div>
+    <div class="koordinat-canli mono" id="koordinat" aria-hidden="true">40.2500° K · 26.4000° D</div>
+    <div class="tur-bar" id="tur-bar" hidden>
+      <span class="mono" id="tur-etiket">01 / 08</span>
+      <span class="tur-cizgi"><span id="tur-dolgu"></span></span>
+    </div>
+  </div>
+  <p class="altyazi mono">ŞEKİL 1 — Eşit ağırlıklı uygunluk (U) + 56 nokta · Kaydır: hikâye aşağıda</p>
+</section>
+
+<!-- 01 MODEL -->
+<section id="model" class="bolum" aria-labelledby="model-baslik">
+  <div class="sol">
+    <p class="goz"><span class="daire">1</span> <span class="elyaz">ölçütler, sabitlendi!</span></p>
+    <h2 id="model-baslik">Görünürlük, ölçüldü.</h2>
+    <p>Tarihsel konumlar, benzer kıyı alanlarından hangi fiziki özellikle ayrılıyor?
+      Üç ölçüt — tek soru. Eşikler önceden kayda geçti, puanlar sonradan ayarlanmadı.</p>
+    <button class="demo-btn" id="tur"><span aria-hidden="true">◉</span> Turu başlat</button>
+    <p class="elyaz kucuk-not">↳ 8 aday, haritada sırayla</p>
+  </div>
+  <div class="sag">
+    <div class="cerceve panel-gorsel">
+      <p class="etiket">U(x) = w<sub>V</sub>·f<sub>V</sub> + w<sub>R</sub>·f<sub>R</sub> + w<sub>S</sub>·f<sub>S</sub></p>
+      <ol class="mini-olcut">
+        <li><b>V</b> Görülen su / 408.952 hücre · gözlemci 4 m</li>
+        <li><b>R</b> Nokta eksi çevre ortalaması · r 1000 m</li>
+        <li><b>S</b> Yapı oturumu eğimi · M2'de + erişim</li>
+      </ol>
+      <p class="etiket">ÖNE ÇIKANLAR · U (EŞİT)</p>
+      <div id="one-cikan"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 AYRIŞMA -->
+<section id="ayrisma" class="bolum" aria-labelledby="ayrisma-baslik">
+  <div class="sol">
+    <p class="goz"><span class="daire">2</span> <span class="elyaz">fark, nerede?</span></p>
+    <h2 id="ayrisma-baslik">Hangi özellikle <em>ayrılıyor?</em></h2>
+    <p>Tabya dörtlüsü, eşleşmiş 12 kontrolle ölçüt ölçüt kıyaslandı.
+      Örnek küçük (n=4) — sonuçlar <b>iz düzeyinde</b> okunur, kanıt diye değil.</p>
+    <div class="cubuklar" id="cubuk-ayrisma" role="img" aria-label="Ölçüt bazında ayrışma"></div>
+  </div>
+  <div class="sag">
+    <div class="cerceve panel-gorsel">
+      <p class="etiket">CÜMLEYLE</p>
+      <ul class="cumleler" id="cumleler"></ul>
+      <p class="etiket">KURAL</p>
+      <p class="kural">Eşleşme yalnız kıyı kesimi + kıyı uzaklığına göre (±500 m).
+        Yükselti, eğim ve görüşe göre eşleşme yok — sınanan şey kirletilmedi.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 HÜKÜM -->
+<section id="sonuclar" class="bolum" aria-labelledby="hukum-baslik">
+  <div class="sol">
+    <p class="goz"><span class="daire">3</span> <span class="elyaz">sınama, bitti!</span></p>
+    <h2 id="hukum-baslik">Ayrışmıyor.</h2>
+    <p>Tabya dörtlüsü vs 12 eşleşmiş kontrol. Fark −0.003, p 0.68.
+      Güven aralığı sıfırı kapsıyor — bu sınırlar içinde hüküm bu.</p>
+    <div class="cubuklar" id="cubuk-h1" role="img" aria-label="Etki büyüklükleri"></div>
+  </div>
+  <div class="sag">
+    <div class="cerceve panel-gorsel">
+      <p class="etiket">fV — U DAĞILIMI</p>
+      <div id="sacilim" role="img" aria-label="Görünürlük uygunluk dağılımı"></div>
+      <p class="etiket">OKUMA MATRİSİ</p>
+      <div class="matris-mini" aria-label="Okuma matrisi">
+        <div><b>Yüksek / kararlı</b><span id="m-yk"></span></div>
+        <div><b>Yüksek / değişken</b><span id="m-yd"></span></div>
+        <div><b>Düşük / kararlı</b><span id="m-dk"></span></div>
+        <div><b>Düşük / değişken</b><span id="m-dd"></span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VERİ -->
+<section id="veri" class="bolum dar" aria-labelledby="veri-baslik">
+  <p class="goz"><span class="daire">4</span> <span class="elyaz">kayıtlar, açık!</span></p>
+  <h2 id="veri-baslik">56 nokta.</h2>
+  <div class="tablo-kaydir"><table id="tablo">
+    <thead><tr><th>ID</th><th>Ad</th><th>fV</th><th>fR</th><th>fS</th><th>U</th></tr></thead>
+    <tbody id="tablo-govde"></tbody>
+  </table></div>
+  <button class="demo-btn" id="csv-indir">CSV indir ↓</button>
+</section>
+
+<!-- PAKET -->
+<section id="indir" class="bolum dar" aria-labelledby="paket-baslik">
+  <h2 id="paket-baslik">Paketi al.</h2>
+  <div class="paket-satir">
+    <a href="dosya/canakkale_cbs.gpkg" download><b>GeoPackage</b><span>harita katmanları ↓</span></a>
+    <a href="dosya/canakkale_vrs.qgz" download><b>QGIS projesi</b><span>hazır düzen ↓</span></a>
+    <a href="#veri"><b>Veri tablosu</b><span>56 nokta · CSV ↓</span></a>
+  </div>
+  <p class="sinir">OSM taslak · −1 m dejenere dışlandı · 42/42 denetim.</p>
+</section>
+</main>
+
+<footer>
+  <p class="kapanis">Boğaz, seçenleri değil <em>seçilenleri</em> hatırlar.</p>
+  <p class="mono alt">BOĞAZ ATLASI · 40°08′ N, 26°24′ E · Yöntem gösterimi.</p>
+</footer>
+
+<aside class="sayfa" id="sayfa" aria-live="polite" hidden>
+  <button id="sayfa-kapat" aria-label="Paneli kapat">×</button>
+  <p class="etiket" id="sayfa-tur"></p>
+  <h3 id="sayfa-ad"></h3>
+  <p class="mono" id="sayfa-koor"></p>
+  <dl id="sayfa-olcut"></dl>
+</aside>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
