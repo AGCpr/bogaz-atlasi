@@ -50,15 +50,48 @@
       <div class="suzgecler" role="group" aria-label="Nokta filtresi">
         <button data-filtre="aday" class="secili" aria-pressed="true">Tabyalar 8</button>
         <button data-filtre="kontrol" class="secili" aria-pressed="true">Kontroller 48</button>
+        <button data-kiyasa="ac">Karşılaştır ⇥</button>
       </div>
     </div>
     <div class="koordinat-canli mono" id="koordinat" aria-hidden="true">40.2500° K · 26.4000° D</div>
+    <div class="kiyasa-cubuk" id="kiyasa" hidden>
+      <span class="mono">EŞİT</span>
+      <input type="range" id="kiyasa-kaydir" min="0" max="100" value="50" aria-label="Eşit uzman karşılaştırma kaydırıcısı">
+      <span class="mono">UZMAN</span>
+    </div>
     <div class="tur-bar" id="tur-bar" hidden>
       <span class="mono" id="tur-etiket">01 / 08</span>
       <span class="tur-cizgi"><span id="tur-dolgu"></span></span>
     </div>
   </div>
   <p class="altyazi mono">ŞEKİL 1 — Eşit ağırlıklı uygunluk (U) + 56 nokta · Kaydır: hikâye aşağıda</p>
+</section>
+
+<!-- HİKAYE -->
+<section id="hikaye" class="hikaye" aria-labelledby="hikaye-baslik">
+  <h2 id="hikaye-baslik" class="gizli">Hikaye</h2>
+  <div class="hikaye-satir" id="hikaye-satir">
+    <article class="hikaye-kart" data-sahne="bogaz">
+      <p class="etiket">SAHNE 01</p><h3>Boğaz, yukarıdan.</h3>
+      <p>Tam koridor, eşit ağırlık. Sorunun coğrafyası.</p><button>Haritada gör →</button>
+    </article>
+    <article class="hikaye-kart" data-sahne="orhaniye">
+      <p class="etiket">SAHNE 02</p><h3>Orhaniye'nin gördüğü.</h3>
+      <p>Hedef suyun %42'si tek noktadan. Kümülatif yüzeyde izle.</p><button>Haritada gör →</button>
+    </article>
+    <article class="hikaye-kart" data-sahne="kilitbahir">
+      <p class="etiket">SAHNE 03</p><h3>Kilitbahir kümesi.</h3>
+      <p>Üç aday bir koyda: Namazgâh, Mecidiye, kale. Yakından bak.</p><button>Haritada gör →</button>
+    </article>
+    <article class="hikaye-kart" data-sahne="hukum">
+      <p class="etiket">SAHNE 04</p><h3>Hüküm anı.</h3>
+      <p>Denge ağırlıkta tablo değişiyor mu? Kaydırıcıyla kıyasla.</p><button>Haritada gör →</button>
+    </article>
+    <article class="hikaye-kart" data-sahne="erisim">
+      <p class="etiket">SAHNE 05</p><h3>Karaya çıkış.</h3>
+      <p>Kıyıdan içeri maliyet: erişim yüzeyinde tabyalar nerede?</p><button>Haritada gör →</button>
+    </article>
+  </div>
 </section>
 
 <!-- 01 MODEL -->

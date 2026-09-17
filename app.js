@@ -110,6 +110,45 @@
     tur.zaman = setTimeout(durak, sakince ? 400 : 1900);
   }
 
+  function katmanSec(k) {
+    $$("[data-katman]").forEach(function (x) { x.classList.toggle("secili", x.getAttribute("data-katman") === k); });
+    Object.keys(katmanlar).forEach(function (kk) {
+      if (kk !== "uzmanK" && HARITA.hasLayer(katmanlar[kk])) HARITA.removeLayer(katmanlar[kk]);
+    });
+    katmanlar[k].setOpacity(0); katmanlar[k].addTo(HARITA);
+    if (sakince) { katmanlar[k].setOpacity(k === "uzmanK" ? 0.85 : 0.75); return; }
+    var t0 = null, hedef = k === "uzmanK" ? 0.85 : 0.75;
+    (function gecis(t) {
+      if (!t0) t0 = t;
+      var o = Math.min((t - t0) / 450, 1) * hedef; katmanlar[k].setOpacity(o);
+      if (o < hedef) requestAnimationFrame(gecis);
+    })(performance.now());
+  }
+
+  /* Kıyas: Eşit (alt) vs Uzman (üst, kırpılır) */
+  var kiyasAcik = false;
+  function kiyasKapat() {
+    if (!kiyasAcik) return;
+    kiyasAcik = false;
+    $("#kiyasa").hidden = true;
+    if (HARITA.hasLayer(katmanlar.uzmanK)) HARITA.removeLayer(katmanlar.uzmanK);
+    var pane = HARITA.getPane("kiyasa");
+    if (pane) pane.style.clipPath = "";
+    var sec = document.querySelector('[data-katman].secili');
+    katmanSec(sec ? sec.getAttribute("data-katman") : "esit");
+  }
+  function kiyasAc() {
+    kiyasAcik = true;
+    $("#kiyasa").hidden = false;
+    katmanSec("esit");
+    katmanlar.uzmanK.addTo(HARITA);
+    kiyasKaydir();
+  }
+  function kiyasKaydir() {
+    var v = parseInt($("#kiyasa-kaydir").value, 10);
+    var pane = HARITA.getPane("kiyasa");
+    if (pane) pane.style.clipPath = "inset(0 " + (100 - v) + "% 0 0)";
+  }
   function haritaKur(noktalar, koridor, hat, meta) {
     VERI.bounds = L.latLngBounds(meta.bounds);
     HARITA = L.map("map", { zoomControl: false, scrollWheelZoom: true }).setView([40.25, 26.4], 10);
@@ -118,6 +157,9 @@
     Object.keys(meta.overlays).forEach(function (k) {
       katmanlar[k] = L.imageOverlay(meta.overlays[k], meta.bounds, { opacity: 0.75 });
     });
+    HARITA.createPane("kiyasa");
+    HARITA.getPane("kiyasa").style.zIndex = 401;
+    katmanlar.uzmanK = L.imageOverlay(meta.overlays.uzman, meta.bounds, { pane: "kiyasa", opacity: 0.85 });
     katmanlar.esit.addTo(HARITA);
     /* Işık hattı: boğaz orta çizgisi (white-desert uçuş çizgisi dili) */
     if (hat && hat.features && hat.features.length) {
@@ -137,20 +179,16 @@
     });
     $$("[data-katman]").forEach(function (b) {
       b.addEventListener("click", function () {
-        $$("[data-katman]").forEach(function (x) { x.classList.remove("secili"); });
-        b.classList.add("secili");
-        Object.keys(katmanlar).forEach(function (k) { HARITA.removeLayer(katmanlar[k]); });
-        var sec = katmanlar[b.getAttribute("data-katman")];
-        sec.setOpacity(0); sec.addTo(HARITA);
-        if (sakince) { sec.setOpacity(0.75); return; }
-        var t0 = null;
-        (function gecis(t) {
-          if (!t0) t0 = t;
-          var o = Math.min((t - t0) / 450, 1) * 0.75; sec.setOpacity(o);
-          if (o < 0.75) requestAnimationFrame(gecis);
-        })(performance.now());
+        if (kiyasAcik) { kiyasKapat(); }
+        katmanSec(b.getAttribute("data-katman"));
       });
     });
+    var kiyasBtn = document.querySelector("[data-kiyasa]");
+    if (kiyasBtn) kiyasBtn.addEventListener("click", function () {
+      if (kiyasAcik) { kiyasKapat(); kiyasBtn.textContent = "Karşılaştır ⇥"; }
+      else { kiyasAc(); kiyasBtn.textContent = "Kapat ×"; }
+    });
+    $("#kiyasa-kaydir").addEventListener("input", kiyasKaydir);
     $$("[data-filtre]").forEach(function (b) {
       b.addEventListener("click", function () {
         var f = b.getAttribute("data-filtre");
@@ -161,6 +199,42 @@
       });
     });
     $("#tur").addEventListener("click", function () { tur.aktif ? turDur() : turBaslat(); });
+    /* Hikaye sahneleri */
+    function bul(id) {
+      var s = VERI.noktalar.filter(function (n) { return n.id === id; });
+      return s.length ? s[0] : null;
+    }
+    function sahneGit(s) {
+      document.getElementById("harita").scrollIntoView({ behavior: sakince ? "auto" : "smooth" });
+      if (kiyasAcik) kiyasKapat();
+      var t05 = bul("T05");
+      if (s === "bogaz") {
+        katmanSec("esit");
+        if (VERI.bounds) HARITA.flyToBounds(VERI.bounds, { duration: sakince ? 0 : 1.8 });
+      } else if (s === "orhaniye" && t05) {
+        katmanSec("kumulatif"); sayfaAc(t05);
+        HARITA.flyTo([t05.lat, t05.lon], 12, { duration: sakince ? 0 : 1.8 });
+      } else if (s === "kilitbahir") {
+        katmanSec("esit");
+        var k = ["T01", "T03", "T08"].map(bul).filter(Boolean);
+        if (k.length) {
+          var lat = k.reduce(function (a, p) { return a + p.lat; }, 0) / k.length;
+          var lon = k.reduce(function (a, p) { return a + p.lon; }, 0) / k.length;
+          HARITA.flyTo([lat, lon], 13, { duration: sakince ? 0 : 1.8 });
+          sayfaAc(k[0]);
+        }
+      } else if (s === "hukum") {
+        if (VERI.bounds) HARITA.flyToBounds(VERI.bounds, { duration: sakince ? 0 : 1.8 });
+        kiyasAc();
+      } else if (s === "erisim") {
+        katmanSec("erisim");
+        if (VERI.bounds) HARITA.flyToBounds(VERI.bounds, { duration: sakince ? 0 : 1.8 });
+      }
+    }
+    $$(".hikaye-kart").forEach(function (kart) {
+      var b = kart.querySelector("button");
+      if (b) b.addEventListener("click", function () { sahneGit(kart.getAttribute("data-sahne")); });
+    });
     $("#sayfa-kapat").addEventListener("click", function () { $("#sayfa").hidden = true; turDur(); });
     document.addEventListener("keydown", function (e) { if (e.key === "Escape") { $("#sayfa").hidden = true; turDur(); } });
   }
