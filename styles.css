@@ -49,10 +49,10 @@ a{color:inherit}
 .cta-ikon{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:5px;
   background:var(--portakal);color:#fff;font-size:.8rem}
 /* HERO */
-.hero{padding:120px 4vw 30px;position:relative}
+.hero{padding:110px 4vw 30px;position:relative;overflow:hidden}
 .not{font-size:1.5rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mur)}
 .alti-cizili{display:inline-block;border-bottom:2px solid var(--mur);padding-bottom:2px}
-.hero h1{font-size:clamp(3.2rem,10vw,8.6rem);margin:14px 0 0;max-width:14ch}
+.hero h1{font-size:clamp(2.6rem,12vw,8.6rem);margin:14px 0 0;max-width:14ch}
 .sag-not{position:absolute;top:210px;right:5vw;font-size:1.35rem;color:var(--soluk);transform:rotate(4deg);text-align:right;line-height:1.2}
 /* Çerçeve */
 .cerceve{border:1px solid var(--cizgi);background:#f4f1e8}
@@ -171,9 +171,27 @@ footer .alt{font-size:.72rem;color:var(--soluk);letter-spacing:.14em}
 .cerceve.reveal{transform:translateY(30px) scale(.985)}
 .cerceve.reveal.gorunur{transform:none}
 @media(max-width:760px){
-  .hap{gap:12px;padding:8px 8px 8px 14px;left:8px;right:8px;transform:none}
-  .hap nav{gap:12px}
+  .hap{gap:10px;padding:8px 8px 8px 14px;left:8px;right:8px;transform:none;max-width:calc(100% - 16px)}
+  .hap nav{display:none}
+  .xy,.eposta{display:none}
+  .hero{padding-top:96px}
   .sag-not{display:none}
-  .xy{top:auto;bottom:12px}
+  .harita-bar{top:8px;left:8px;right:8px}
+  .yuzeyler,.suzgecler{max-width:100%;overflow-x:auto;scrollbar-width:none}
+  .yuzeyler::-webkit-scrollbar,.suzgecler::-webkit-scrollbar{display:none}
+  .yuzeyler button,.suzgecler button{font-size:.68rem;padding:8px 11px;white-space:nowrap}
+  #map{height:72vh;min-height:380px}
+  .bolum{padding:9vh 5vw}
+  .cubuk{grid-template-columns:104px 1fr 62px}
+  .matris-mini{grid-template-columns:1fr}
+  .matris-mini div:nth-child(odd){border-right:0}
+  .olcut-satirlar li{gap:16px}
+  .olcut-satirlar .sira{font-size:2rem;min-width:40px}
+  .paket-satir a{flex-direction:column;gap:2px;align-items:flex-start}
+  .tablo-kaydir{-webkit-overflow-scrolling:touch}
+  .tur-bar{max-width:calc(100% - 20px);font-size:.68rem;padding:8px 14px}
+  #tur-etiket{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:46vw}
+  .tur-cizgi{width:90px}
   #sayfa-olcut{grid-template-columns:repeat(3,1fr)}
+  .sayfa{padding:18px 16px 14px}
 }
