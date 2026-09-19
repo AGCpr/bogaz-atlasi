@@ -258,6 +258,7 @@
   }
 
   function cubuklar(meta) {
+    function ptxt(p) { return (p === null || p === undefined) ? "betimsel" : ("p=" + p); }
     var veri = [["Yalnız-görüş", meta.h1v.fark], ["M1 · üç ölçüt", meta.h1.fark]];
     var maks = Math.max.apply(null, veri.map(function (v) { return Math.abs(v[1]); }).concat([0.001]));
     $("#cubuk-h1").innerHTML = veri.map(function (v) {
@@ -265,7 +266,7 @@
         Math.round(Math.abs(v[1]) / maks * 100) + '%"></span><span class="deg">' +
         (v[1] >= 0 ? "+" : "") + v[1].toFixed(4) + "</span></div>";
     }).join("") + '<p class="mono" style="font-size:.74rem;color:var(--soluk)">n=' + meta.h1.nt +
-      " vs " + meta.h1.nk + " · p=" + meta.h1.p + "</p>";
+      " vs " + meta.h1.nk + " · " + ptxt(meta.h1.p) + " · " + (meta.h1.kaynak || "pilot") + "</p>";
   }
 
   function sacilim(noktalar) {
