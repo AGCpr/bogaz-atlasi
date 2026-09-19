@@ -149,6 +149,9 @@ a{color:inherit}
 .cubuk{display:grid;grid-template-columns:150px 1fr 66px;gap:10px;align-items:center;margin:9px 0;font-size:.88rem}
 .cubuk .bar{height:12px;background:var(--kobalt);min-width:2px}
 .cubuk .deg{text-align:right;font-family:var(--mono);font-size:.78rem}
+.gercek-kutu{margin-top:20px;border:1px solid var(--cizgi);background:#f4f1e8;padding:18px 20px}
+.gercek-kutu p{margin:6px 0 0;font-size:.92rem;color:var(--soluk)}
+.gercek-kutu b{color:var(--mur)}
 #sacilim svg{width:100%;height:auto;margin-top:14px}
 .matris-mini{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--cizgi);margin-top:16px}
 .matris-mini div{padding:14px;border-top:1px solid var(--cizgi-ince)}
