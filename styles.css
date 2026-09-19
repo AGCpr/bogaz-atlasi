@@ -1,3 +1,11 @@
+/* self-host OFL (36) */
+@font-face{font-family:'Archivo';font-style:normal;font-weight:400;font-display:swap;src:url(fonts/Archivo-400.woff2) format('woff2');}
+@font-face{font-family:'Archivo';font-style:normal;font-weight:600;font-display:swap;src:url(fonts/Archivo-600.woff2) format('woff2');}
+@font-face{font-family:'Archivo';font-style:normal;font-weight:800;font-display:swap;src:url(fonts/Archivo-800.woff2) format('woff2');}
+@font-face{font-family:'Caveat';font-style:normal;font-weight:500;font-display:swap;src:url(fonts/Caveat-500.woff2) format('woff2');}
+@font-face{font-family:'Caveat';font-style:normal;font-weight:600;font-display:swap;src:url(fonts/Caveat-600.woff2) format('woff2');}
+@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:400;font-display:swap;src:url(fonts/IBM+Plex+Mono-400.woff2) format('woff2');}
+@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:500;font-display:swap;src:url(fonts/IBM+Plex+Mono-500.woff2) format('woff2');}
 /* BOĞAZ ATLASI v3 — kâğıt + mürekkep + kobalt (illoca dili) */
 :root{
   --kagit:#eae5d8; --kagit2:#e2dccb; --mur:#141821; --mur2:#1f2530;

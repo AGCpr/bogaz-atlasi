@@ -19,10 +19,18 @@
   }
 
   var HARITA, katmanlar = {}, isaretler = [], VERI = { noktalar: [], hat: null };
-  var filtre = { aday: true, kontrol: true };
+  var filtre = { tarihsel: true, aday: true, kontrol: true };
   var tur = { aktif: false, sira: [], idx: 0, zaman: null };
+  var TURAD = { tarihsel: "Kurumsal referans", aday: "Tabya adayı · taslak", kontrol: "Karşılaştırma alanı" };
 
   function ikon(p) {
+    if (p.tur === "tarihsel") {
+      return L.divIcon({ html:
+        '<svg width="24" height="24" viewBox="0 0 24 24">' +
+        '<circle cx="12" cy="12" r="9" fill="none" stroke="#c8a24b" stroke-width="2.5"/>' +
+        '<circle cx="12" cy="12" r="4.5" fill="#141821"/></svg>',
+        className: "", iconSize: [24, 24], iconAnchor: [12, 12] });
+    }
     var yuksek = p.tur === "aday" && p.sinif === "yuksek/kararli";
     var renk = p.tur === "aday" ? "#141821" : "#5b8fd0";
     var html = yuksek
@@ -36,7 +44,7 @@
   }
 
   function sayfaAc(p) {
-    $("#sayfa-tur").textContent = p.tur === "aday" ? "Tabya adayı · taslak" : "Karşılaştırma alanı";
+    $("#sayfa-tur").textContent = TURAD[p.tur] || p.tur;
     $("#sayfa-ad").textContent = p.ad;
     $("#sayfa-koor").textContent = p.lat.toFixed(4) + "° K · " + p.lon.toFixed(4) + "° D";
     var sat = [["fV", p.fV], ["fR", p.fR], ["fS", p.fS], ["U", p.U], ["M2", p.M2]];
@@ -76,7 +84,7 @@
     $("#tur").innerHTML = '<span aria-hidden="true">◉</span> Turu başlat';
   }
   function turBaslat() {
-    tur.sira = VERI.noktalar.filter(function (p) { return p.tur === "aday"; });
+    tur.sira = VERI.noktalar.filter(function (p) { return p.tur !== "kontrol"; });
     if (!tur.sira.length || !HARITA) return;
     tur.aktif = true; tur.idx = 0;
     var jeton = ++turJeton;
@@ -216,7 +224,7 @@
         HARITA.flyTo([t05.lat, t05.lon], 12, { duration: sakince ? 0 : 1.8 });
       } else if (s === "kilitbahir") {
         katmanSec("esit");
-        var k = ["T01", "T03", "T08"].map(bul).filter(Boolean);
+        var k = ["R01", "R02", "RK1"].map(bul).filter(Boolean);
         if (k.length) {
           var lat = k.reduce(function (a, p) { return a + p.lat; }, 0) / k.length;
           var lon = k.reduce(function (a, p) { return a + p.lon; }, 0) / k.length;
@@ -240,7 +248,7 @@
   }
 
   function oneCikan(noktalar) {
-    var s = noktalar.filter(function (n) { return n.tur === "aday"; })
+    var s = noktalar.filter(function (n) { return n.tur === "tarihsel"; })
       .sort(function (a, b) { return b.U - a.U; }).slice(0, 5);
     var maks = s.length ? s[0].U : 1;
     $("#one-cikan").innerHTML = s.map(function (n) {
@@ -265,9 +273,12 @@
     function x(v) { return p + Math.min(v / 0.5, 1) * (W - 2 * p); }
     function y(v) { return H - p - v * (H - 2 * p); }
     var el = noktalar.map(function (n) {
-      return '<circle cx="' + x(n.fV).toFixed(1) + '" cy="' + y(n.U).toFixed(1) + '" r="' +
-        (n.tur === "aday" ? 7 : 4) + '" fill="' + (n.tur === "aday" ? "#141821" : "#5b8fd0") +
-        '" opacity="0.9"><title>' + n.ad + " U=" + n.U + "</title></circle>";
+      var col = n.tur === "tarihsel" ? "#141821" : (n.tur === "aday" ? "#8a8fa0" : "#5b8fd0");
+      var rr = n.tur === "kontrol" ? 3.5 : 6;
+      var halka = n.tur === "tarihsel" ? ' stroke="#c8a24b" stroke-width="1.6"' : "";
+      return '<circle cx="' + x(n.fV).toFixed(1) + '" cy="' + y(n.U).toFixed(1) + '" r="' + rr +
+        '" fill="' + col + '"' + halka +
+        ' opacity="0.9"><title>' + n.ad + " U=" + n.U + "</title></circle>";
     }).join("");
     $("#sacilim").innerHTML = '<svg viewBox="0 0 ' + W + " " + H + '" role="presentation">' +
       '<line x1="' + p + '" y1="' + (H - p) + '" x2="' + (W - 14) + '" y2="' + (H - p) + '" stroke="#141821"/>' +
@@ -276,7 +287,7 @@
 
   function matris(noktalar) {
     var s = { "yuksek/kararli": [], "yuksek/degisken": [], "dusuk/kararli": [], "dusuk/degisken": [] };
-    noktalar.forEach(function (n) { if (n.tur === "aday" && n.sinif && s[n.sinif]) s[n.sinif].push(n.id); });
+    noktalar.forEach(function (n) { if (n.tur === "tarihsel" && n.sinif && s[n.sinif]) s[n.sinif].push(n.id); });
     $("#m-yk").textContent = s["yuksek/kararli"].join(" · ") || "—";
     $("#m-yd").textContent = s["yuksek/degisken"].join(" · ") || "—";
     $("#m-dk").textContent = s["dusuk/kararli"].join(" · ") || "—";
@@ -299,7 +310,7 @@
     var s = noktalar.slice().sort(function (a, b) { return b.U - a.U; });
     $("#tablo-govde").innerHTML = s.map(function (n) {
       return "<tr data-id=\"" + n.id + "\"><td class=\"mono\">" + n.id + "</td><td class=\"" +
-        (n.tur === "aday" ? "aday" : "") + "\">" + n.ad + "</td><td>" + n.fV + "</td><td>" +
+        (n.tur === "kontrol" ? "" : "aday") + "\">" + n.ad + "</td><td>" + n.fV + "</td><td>" +
         n.fR + "</td><td>" + n.fS + "</td><td><b>" + n.U + "</b></td></tr>";
     }).join("");
     $$("#tablo-govde tr").forEach(function (tr) {
